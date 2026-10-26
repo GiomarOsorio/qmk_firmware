@@ -1,0 +1,140 @@
+<title>Corne Gio Keymap</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: una columna de capas apiladas, cada una con su tablero dibujado a escala del Corne 3x6+3 */
+:root {
+  --bg: #eef1f4;
+  --paper: #ffffff;
+  --fg: #1d2530;
+  --muted: #5b6675;
+  --line: #d3d9e0;
+  --key: #f7f9fb;
+  --key-edge: #c3cad3;
+  --key-fg: #1d2530;
+  --num: #cfe1ff;   --num-ink: #1f4f99;
+  --sym: #ffdcbf;   --sym-ink: #8a4a12;
+  --util: #e2d6ff;  --util-ink: #5631a8;
+  --tog: #c9efd4;   --tog-ink: #1d6a3a;
+  --danger: #ffcdcd; --danger-ink: #a12626;
+  --held: #fbf0a8;
+  --trans: #98a1ad;
+  --display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", sans-serif;
+  --body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12161c; --paper: #1a2029; --fg: #e4e9ef; --muted: #98a3b1; --line: #2c3541;
+    --key: #232b36; --key-edge: #3a4553; --key-fg: #e4e9ef;
+    --num: #1d3961; --num-ink: #a9c8ff; --sym: #55361b; --sym-ink: #ffc896;
+    --util: #382a61; --util-ink: #cdb8ff; --tog: #1c4a2c; --tog-ink: #9fe3b4;
+    --danger: #5f2020; --danger-ink: #ffb0b0; --held: #4f4a1d; --trans: #6b7684;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12161c; --paper: #1a2029; --fg: #e4e9ef; --muted: #98a3b1; --line: #2c3541;
+  --key: #232b36; --key-edge: #3a4553; --key-fg: #e4e9ef;
+  --num: #1d3961; --num-ink: #a9c8ff; --sym: #55361b; --sym-ink: #ffc896;
+  --util: #382a61; --util-ink: #cdb8ff; --tog: #1c4a2c; --tog-ink: #9fe3b4;
+  --danger: #5f2020; --danger-ink: #ffb0b0; --held: #4f4a1d; --trans: #6b7684;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg);
+  font-family: var(--body); font-size: 15px; line-height: 1.55;
+}
+.wrap {
+  max-width: 1040px; margin: 0 auto;
+  padding-block: 40px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 28px;
+}
+.top { display: grid; gap: 14px; }
+.eyebrow {
+  font-family: var(--mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted);
+}
+h1 {
+  font-family: var(--display); font-weight: 800; font-size: clamp(30px, 5vw, 46px);
+  line-height: 1.05; margin: 0; text-wrap: balance; letter-spacing: -0.01em;
+}
+.lede { margin: 0; max-width: 62ch; color: var(--muted); }
+nav { display: flex; flex-wrap: wrap; gap: 8px; }
+nav a {
+  font-family: var(--mono); font-size: 13px; color: var(--fg); text-decoration: none;
+  padding: 5px 11px; border: 1px solid var(--line); border-radius: 6px; background: var(--paper);
+}
+nav a:hover, nav a:focus-visible { border-color: var(--fg); outline: none; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 13px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 7px; }
+.legend i { width: 14px; height: 14px; border-radius: 3px; border: 1px solid var(--key-edge); display: inline-block; }
+.layer {
+  background: var(--paper); border: 1px solid var(--line); border-radius: 10px;
+  padding: 22px clamp(14px, 3vw, 28px) 20px; display: grid; gap: 14px; min-width: 0;
+  scroll-margin-top: 16px;
+}
+.layer-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 10px 20px; }
+.titles { min-width: 0; flex: 1 1 320px; }
+h2 { font-family: var(--display); font-weight: 600; font-size: 24px; margin: 0; line-height: 1.15; }
+.desc { margin: 4px 0 0; color: var(--muted); max-width: 64ch; }
+.how {
+  display: inline-flex; align-items: center; gap: 8px; flex: none;
+  font-family: var(--mono); font-size: 12.5px; padding: 6px 10px; border-radius: 6px;
+}
+.how b { font-weight: 500; text-transform: uppercase; letter-spacing: .06em; font-size: 11px; opacity: .8; }
+.how.base { background: var(--key); color: var(--fg); border: 1px solid var(--key-edge); }
+.how.toggle { background: var(--tog); color: var(--tog-ink); }
+.how.hold-num { background: var(--num); color: var(--num-ink); }
+.how.hold-sym { background: var(--sym); color: var(--sym-ink); }
+.how.hold-util { background: var(--util); color: var(--util-ink); }
+.board { overflow-x: auto; min-width: 0; }
+.board svg { display: block; width: 100%; min-width: 600px; height: auto; }
+.board svg.keymap { fill: var(--key-fg); font-family: var(--mono); font-size: 14px; }
+.board svg path { fill: inherit; }
+.board text { text-anchor: middle; dominant-baseline: middle; }
+.board text.hold { font-size: 10.5px; dominant-baseline: auto; fill: var(--muted); }
+.board text.trans { fill: var(--trans); }
+.board rect.key { fill: var(--key); stroke: var(--key-edge); stroke-width: 1; }
+.board rect.held-num { fill: var(--num); }
+.board rect.held-sym { fill: var(--sym); }
+.board rect.held-util { fill: var(--util); }
+.board rect.held { fill: var(--held); }
+.board rect.toggle { fill: var(--tog); }
+.board rect.danger { fill: var(--danger); }
+.board text.layer-activator { text-decoration: none; font-weight: 500; }
+.notes { margin: 0; padding-left: 18px; display: grid; gap: 4px; color: var(--fg); font-size: 14px; }
+.notes li::marker { color: var(--muted); }
+footer { font-size: 13px; color: var(--muted); }
+footer code { font-family: var(--mono); font-size: 12.5px; }
+@media (max-width: 520px) {
+  .wrap { padding-block: 24px 40px; }
+  h2 { font-size: 21px; }
+}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="eyebrow">crkbd/rev1 · LAYOUT_split_3x6_3 · keymap gio</div>
+    <h1>Corne de Gio: Dvorak, QWERTY y Maple</h1>
+    <p class="lede">Las seis capas del firmware, dibujadas desde el <code>keymap.c</code> de la rama feat/esp-gio. El sistema operativo debe estar en Español Latinoamérica para que los símbolos salgan tal como se ven aquí.</p>
+    <nav aria-label="Capas">{{NAV}}</nav>
+    <div class="legend" aria-label="Leyenda">
+      <span><i style="background: var(--num)"></i>Activa Numpad</span>
+      <span><i style="background: var(--sym)"></i>Activa Symbols</span>
+      <span><i style="background: var(--util)"></i>Activa Util</span>
+      <span><i style="background: var(--held)"></i>Tecla mantenida en esta capa</span>
+      <span><i style="background: var(--tog)"></i>Cambia de capa (toggle)</span>
+      <span><i style="background: var(--danger)"></i>Bootloader</span>
+      <span>▽ = igual que la capa de abajo</span>
+    </div>
+  </header>
+
+{{SECTIONS}}
+
+  <footer>Para regenerar: <code>draw/draw.sh</code> (<code>qmk c2json</code> → <code>keymap draw</code>).</footer>
+</div>

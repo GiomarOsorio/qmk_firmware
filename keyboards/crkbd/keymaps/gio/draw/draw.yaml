@@ -1,0 +1,22 @@
+draw_config:
+  key_w: 64
+  key_h: 56
+  split_gap: 40
+  dark_mode: auto
+  append_colon_to_layer_header: false
+  svg_extra_style: |
+    rect.held-num { fill: #cfe3ff; }
+    rect.held-sym { fill: #ffe0c2; }
+    rect.held-util { fill: #e3d5ff; }
+    rect.toggle { fill: #c8f0d2; }
+    rect.danger { fill: #ffc9c9; }
+    rect.held { fill: #fdf3b0; }
+    text.trans { fill: #9aa0a6; }
+    @media (prefers-color-scheme: dark) {
+      rect.held-num { fill: #1f3a5f; }
+      rect.held-sym { fill: #5a3a1c; }
+      rect.held-util { fill: #3c2b63; }
+      rect.toggle { fill: #1e4d2b; }
+      rect.danger { fill: #6b1f1f; }
+      rect.held { fill: #5a5320; }
+    }
