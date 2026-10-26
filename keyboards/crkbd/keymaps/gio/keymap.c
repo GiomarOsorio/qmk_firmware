@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 enum layers {
     _DVORAK,
     _QWERTY,
+    _MAPLE,
     _NUMPAD,
     _SYMBOLS,
     _UTIL
@@ -30,23 +31,25 @@ enum layers {
 enum custom_keycodes {
     MW_COPY = SAFE_RANGE,   // Copiar
     MW_PASTE,               // Pegar
-    MW_CUT,                 // Pegar
-    MW_PSCR,                // Captera de pantalla
-    MW_WDS,                 // Captera de pantalla
-    MW_LEFT,                // Mover a la izquierda (macOS)
-    MW_RIGHT,               // Mover a la derecha (macOS)
+    MW_CUT,                 // Cortar
+    MW_PSCR,                // Captura de pantalla
+    MW_WDS,                 // Vista de ventanas / escritorios
+    MW_LEFT,                // Escritorio a la izquierda
+    MW_RIGHT,               // Escritorio a la derecha
 };
 
-// Variable para el modo (macOS o Windows)
-bool is_mac_mode = true;
-// Cambia entre Dvorak y QWERTY
-bool is_dvorak = true;
+// SO detectado (macOS, Windows o Linux)
+os_variant_t host_os = OS_MACOS;
+#define is_mac_mode (host_os == OS_MACOS || host_os == OS_IOS)
 
-
-#define TG_GAME TG(_QWERTY)
+#define TG_QWRT TG(_QWERTY)
+#define TG_MAPL TG(_MAPLE)
+#define TO_BASE TO(_DVORAK)
 #define NUMPAD  MO(_NUMPAD)
 #define SYMBOLS MO(_SYMBOLS)
 #define UTIL    MO(_UTIL)
+// Tap: Shift de un toque (one-shot), hold: Alt. El tap se maneja en process_record_user
+#define ALT_OSS LALT_T(KC_F24)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_DVORAK] = LAYOUT_split_3x6_3(
@@ -55,20 +58,31 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|--------+--------+--------+--------+--------+--------|                              |--------+--------+--------+--------+--------+--------|
       KC_LCTL,    ES_A,    ES_O,    ES_E,    ES_U,    ES_I,                                   ES_D,    ES_H,    ES_T,    ES_N,    ES_S, ES_NTIL,
   //|--------+--------+--------+--------+--------+--------|                              |--------+--------+--------+--------+--------+--------|
-      KC_LSFT, ES_PIPE,    ES_Q,    ES_J,    ES_K,    ES_X,                                   ES_B,    ES_M,    ES_W,    ES_V,    ES_Z,  KC_TAB,
+      KC_LSFT,  KC_TAB,    ES_Q,    ES_J,    ES_K,    ES_X,                                   ES_B,    ES_M,    ES_W,    ES_V,    ES_Z, ES_ACUT,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+---------+--------+--------+--------+--------+--------|
-                                          KC_LGUI,  NUMPAD,  KC_SPC,     KC_ENT,  SYMBOLS,  KC_RALT
+                                          KC_LGUI,  NUMPAD,  KC_SPC,     KC_ENT,  SYMBOLS,  ALT_OSS
                                       //`--------------------------'  `---------------------------'
   ),
     [_QWERTY] = LAYOUT_split_3x6_3(
   //,-----------------------------------------------------.                   ,-----------------------------------------------------.
-       KC_ESC,    ES_Q,    ES_W,    ES_E,    ES_R,    ES_T,                        ES_Y,    ES_U,    ES_I,    ES_O,   ES_P,  KC_BSPC,
+       KC_ESC,    ES_Q,    ES_W,    ES_E,    ES_R,    ES_T,                        ES_Y,    ES_U,    ES_I,    ES_O,    ES_P, KC_BSPC,
   //|--------+--------+--------+--------+--------+--------|                   |--------+--------+--------+--------+--------+--------|
-      KC_LCTL,    ES_A,    ES_S,    ES_D,    ES_F,    ES_G,                        ES_H,    ES_J,    ES_K,    ES_L,    ES_N, ES_NTIL,
+      KC_LCTL,    ES_A,    ES_S,    ES_D,    ES_F,    ES_G,                        ES_H,    ES_J,    ES_K,    ES_L, ES_NTIL, ES_ACUT,
   //|--------+--------+--------+--------+--------+--------|                   |--------+--------+--------+--------+--------+--------|
-      KC_LSFT,    ES_Z,    ES_X,    ES_C,    ES_V,    ES_B,                        ES_N,    ES_M, KC_COMM,  KC_DOT, KC_SLSH,  KC_TAB,
+      KC_LSFT,    ES_Z,    ES_X,    ES_C,    ES_V,    ES_B,                        ES_N,    ES_M, ES_COMM,  ES_DOT, ES_MINS, KC_RSFT,
   //|--------+--------+--------+--------+--------+--------+--------|  |-------+--------+--------+--------+--------+--------+--------|
-                                          KC_LGUI,  NUMPAD,  KC_SPC,    KC_ENT, SYMBOLS, KC_RALT
+                                           KC_TAB,  NUMPAD,  KC_SPC,    KC_ENT, SYMBOLS, KC_LALT
+                                      //`--------------------------'  `-------------------------'
+  ),
+    [_MAPLE] = LAYOUT_split_3x6_3(
+  //,-----------------------------------------------------.                   ,-----------------------------------------------------.
+       KC_ESC,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,                        KC_I,    KC_E,   KC_UP,    KC_S,    KC_K, KC_BSPC,
+  //|--------+--------+--------+--------+--------+--------|                   |--------+--------+--------+--------+--------+--------|
+      KC_LSFT,  KC_INS, KC_HOME, KC_PGUP,    KC_Z,    KC_X,                        KC_Q, KC_LEFT, KC_DOWN, KC_RGHT,    KC_M,    KC_W,
+  //|--------+--------+--------+--------+--------+--------|                   |--------+--------+--------+--------+--------+--------|
+      KC_LCTL,  KC_DEL,  KC_END, KC_PGDN,    KC_C,    KC_V,                        KC_G,    KC_L,    KC_B,    KC_H,    KC_N,    KC_P,
+  //|--------+--------+--------+--------+--------+--------+--------|  |-------+--------+--------+--------+--------+--------+--------|
+                                           KC_SPC, KC_LCTL, KC_LALT,    KC_ENT,  KC_TAB,    UTIL
                                       //`--------------------------'  `-------------------------'
   ),
     [_NUMPAD] = LAYOUT_split_3x6_3(
@@ -86,7 +100,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //,-----------------------------------------------------.                               ,-----------------------------------------------------.
        ES_DLR, ES_LBRC, ES_LCBR, ES_LPRN, ES_AMPR,  ES_EQL,                                 ES_EXLM, ES_QUES, ES_RPRN, ES_RCBR, ES_RBRC,  ES_NOT,
   //|--------+--------+--------+--------+--------+--------|                               |--------+--------+--------+--------+--------+--------|
-       ES_GRV, ES_MINS, ES_SLSH,   ES_AT, ES_NUMB, ES_DQUO,                                 ES_QUOT, ES_PERC, ES_TILD, ES_BSLS, ES_UNDS, ES_ACUT,
+       ES_GRV, ES_MINS, ES_SLSH,   ES_AT, ES_NUMB, ES_DQUO,                                 ES_QUOT, ES_PERC, ES_TILD, ES_BSLS, ES_UNDS, ES_PIPE,
   //|--------+--------+--------+--------+--------+--------|                               |--------+--------+--------+--------+--------+--------|
       ES_MORD, ES_LABK, ES_IEXL, KC_VOLD, KC_VOLU, KC_MUTE,                                 KC_MPRV, KC_MPLY, KC_MNXT, ES_IQUE, ES_RABK, ES_CIRC,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------+--------|
@@ -95,11 +109,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
     [_UTIL] = LAYOUT_split_3x6_3(
   //,------------------------------------------------------.                    ,-----------------------------------------------------.
-      QK_BOOT, TG_GAME, XXXXXXX, XXXXXXX, XXXXXXX,  XXXXXXX,                       XXXXXXX, MS_BTN1, MS_BTN2, MS_BTN3, MS_BTN4, XXXXXXX,
+      TO_BASE, TG_QWRT, TG_MAPL, XXXXXXX, XXXXXXX,  XXXXXXX,                       XXXXXXX, MS_BTN1, MS_BTN2, MS_BTN3, MS_BTN4, QK_BOOT,
   //|--------+--------+--------+--------+--------+---------|                    |---------+--------+--------+--------+--------+--------|
-      RGB_TOG, RGB_HUI, RGB_SAI, RGB_VAI, RGB_SPI,  XXXXXXX,                       XXXXXXX, MS_LEFT, MS_DOWN,   MS_UP, MS_RGHT, XXXXXXX,
+      RM_TOGG, RM_HUEU, RM_SATU, RM_VALU, RM_SPDU,  XXXXXXX,                       XXXXXXX, MS_LEFT, MS_DOWN,   MS_UP, MS_RGHT, XXXXXXX,
   //|--------+--------+--------+--------+--------+---------|                    |---------+--------+--------+--------+--------+--------|
-      RGB_MOD, RGB_HUD, RGB_SAD, RGB_VAD, RGB_SPD,  XXXXXXX,                       XXXXXXX, MS_WHLL, MS_WHLD, MS_WHLU, MS_WHLR, XXXXXXX,
+      RM_NEXT, RM_HUED, RM_SATD, RM_VALD, RM_SPDD,  XXXXXXX,                       XXXXXXX, MS_WHLL, MS_WHLD, MS_WHLU, MS_WHLR, XXXXXXX,
   //|--------+--------+--------+--------+--------+---------+--------|  |--------+---------+--------+--------+--------+--------+--------|
                                           KC_LGUI,  KC_TRNS,  KC_SPC,     KC_ENT,  KC_TRNS, KC_RALT
                                       //`---------------------------'  `---------------------------'
@@ -300,7 +314,10 @@ static void print_status_narrow(void) {
             oled_write("Dvrak", false);
             break;
         case _QWERTY:
-            oled_write("Gming", false);
+            oled_write("Qwrty", false);
+            break;
+        case _MAPLE:
+            oled_write("Maple", false);
             break;
         case _SYMBOLS:
             oled_write("Smbol", false);
@@ -309,16 +326,18 @@ static void print_status_narrow(void) {
             oled_write("Nmpad", false);
             break;
         case _UTIL:
-            oled_write("Util  ", false);
+            oled_write("Util ", false);
             break;
         default:
             oled_write("Undef", false);
     }
 
-    /* caps lock */
+    /* caps lock / caps word */
     oled_set_cursor(0, 8);
     if (led_usb_state.caps_lock) {
         oled_write("CPSLK", false);
+    } else if (is_caps_word_on()) {
+        oled_write("CPSWD", false);
     } else {
         oled_write("     ", false);
     }
@@ -350,158 +369,73 @@ bool oled_task_user(void) {
 
 
 #endif
-bool process_detected_host_os_kb(os_variant_t detected_os) {
-    if (!process_detected_host_os_user(detected_os)) {
-        return false;
-    }
-    switch (detected_os) {
-        case OS_MACOS:
-        case OS_IOS:
-            is_mac_mode = true;
-            break;
-        case OS_WINDOWS:
-            is_mac_mode = false;
-            break;
-        case OS_LINUX:
-            is_mac_mode = false;
-            break;
-        case OS_UNSURE:
-            is_mac_mode = false;
-            break;
-    }
-
+bool process_detected_host_os_user(os_variant_t detected_os) {
+    host_os = detected_os;
     return true;
+}
+
+// Atajo que envia cada macro segun el SO detectado
+static uint16_t mw_shortcut(uint16_t keycode) {
+    switch (keycode) {
+        case MW_COPY:
+            return is_mac_mode ? G(KC_C) : C(KC_C);
+        case MW_PASTE:
+            return is_mac_mode ? G(KC_V) : C(KC_V);
+        case MW_CUT:
+            return is_mac_mode ? G(KC_X) : C(KC_X);
+        case MW_PSCR:
+            if (is_mac_mode) return C(S(G(KC_4)));
+            return host_os == OS_LINUX ? KC_PSCR : S(G(KC_S));
+        case MW_WDS:
+            if (is_mac_mode) return C(KC_UP);
+            return host_os == OS_LINUX ? G(KC_W) : G(KC_TAB);
+        case MW_LEFT:
+            return is_mac_mode ? C(KC_LEFT) : C(G(KC_LEFT));
+        case MW_RIGHT:
+            return is_mac_mode ? C(KC_RGHT) : C(G(KC_RGHT));
+    }
+    return KC_NO;
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-        case MW_COPY:
-            if (record->event.pressed) {
-                if (is_mac_mode) {
-                    register_mods(mod_config(MOD_LGUI));
-                    register_code(KC_C);
-                } else {
-                    register_mods(mod_config(MOD_LCTL));
-                    register_code(KC_C);
+        case ALT_OSS:
+            // Tap: Shift de un toque. Hold: Alt normal
+            if (record->tap.count) {
+                if (record->event.pressed) {
+                    add_oneshot_mods(MOD_BIT(KC_RSFT));
                 }
-            } else {
-                if (is_mac_mode) {
-                    unregister_mods(mod_config(MOD_LGUI));
-                    unregister_code(KC_C);
-                } else {
-                    unregister_mods(mod_config(MOD_LCTL));
-                    unregister_code(KC_C);
-                }
+                return false;
             }
-            return false;
-        case MW_PASTE:
+            return true;
+        case MW_COPY ... MW_RIGHT:
             if (record->event.pressed) {
-                if (is_mac_mode) {
-                    register_mods(mod_config(MOD_LGUI));
-                    register_code(KC_V);
-                } else {
-                    register_mods(mod_config(MOD_LCTL));
-                    register_code(KC_V);
-                }
+                register_code16(mw_shortcut(keycode));
             } else {
-                if (is_mac_mode) {
-                    unregister_mods(mod_config(MOD_LGUI));
-                    unregister_code(KC_V);
-                } else {
-                    unregister_mods(mod_config(MOD_LCTL));
-                    unregister_code(KC_V);
-                }
-            }
-            return false;
-        case MW_CUT:
-            if (record->event.pressed) {
-                if (is_mac_mode) {
-                    register_mods(mod_config(MOD_LGUI));
-                    register_code(KC_X);
-                } else {
-                    register_mods(mod_config(MOD_LCTL));
-                    register_code(KC_X);
-                }
-            } else {
-                if (is_mac_mode) {
-                    unregister_mods(mod_config(MOD_LGUI));
-                    unregister_code(KC_X);
-                } else {
-                    unregister_mods(mod_config(MOD_LCTL));
-                    unregister_code(KC_X);
-                }
-            }
-            return false;
-        case MW_PSCR:
-            if (record->event.pressed) {
-                if (is_mac_mode) {
-                    register_mods(mod_config(MOD_LCTL));
-                    register_mods(mod_config(MOD_LSFT));
-                    register_mods(mod_config(MOD_LGUI));
-                    register_code(KC_4);
-                } else {
-                    register_mods(mod_config(MOD_LGUI));
-                    register_mods(mod_config(MOD_LSFT));
-                    register_code(KC_S);
-                }
-            } else {
-                if (is_mac_mode) {
-                    unregister_mods(mod_config(MOD_LCTL));
-                    unregister_mods(mod_config(MOD_LSFT));
-                    unregister_mods(mod_config(MOD_LGUI));
-                    unregister_code(KC_4);
-                } else {
-                    unregister_mods(mod_config(MOD_LGUI));
-                    unregister_mods(mod_config(MOD_LSFT));
-                    unregister_code(KC_S);
-                }
-            }
-            return false;
-        case MW_WDS:
-            if (record->event.pressed) {
-                if (is_mac_mode) {
-                    register_mods(mod_config(MOD_LCTL));
-                    register_code(KC_UP);
-                } else {
-                    unregister_mods(mod_config(MOD_LCTL));
-                    unregister_code(KC_TAB);
-                }
-            } else {
-                if (is_mac_mode) {
-                    unregister_mods(mod_config(MOD_LCTL));
-                    unregister_mods(mod_config(MOD_LGUI));
-                } else {
-                    unregister_mods(mod_config(MOD_LCTL));
-                    unregister_code(KC_TAB);
-                }
-            }
-            return false;
-        case MW_LEFT:
-            if (record->event.pressed) {
-                if (is_mac_mode) {
-                    register_mods(mod_config(MOD_LCTL));
-                    register_code(KC_LEFT);
-                }
-            } else {
-                if (is_mac_mode) {
-                    unregister_mods(mod_config(MOD_LCTL));
-                    unregister_code(KC_LEFT);
-                }
-            }
-            return false;
-        case MW_RIGHT:
-            if (record->event.pressed) {
-                if (is_mac_mode) {
-                    register_mods(mod_config(MOD_LCTL));
-                    register_code(KC_RIGHT);
-                }
-            } else {
-                if (is_mac_mode) {
-                    unregister_mods(mod_config(MOD_LCTL));
-                    unregister_code(KC_RIGHT);
-                }
+                unregister_code16(mw_shortcut(keycode));
             }
             return false;
     }
     return true;
+}
+
+// Caps Word adaptado a Espanol Latinoamerica
+bool caps_word_press_user(uint16_t keycode) {
+    switch (keycode) {
+        // Letras (incluye Ñ): se aplica Shift
+        case KC_A ... KC_Z:
+        case ES_NTIL:
+            add_weak_mods(MOD_BIT(KC_LSFT));
+            return true;
+        // Siguen la palabra sin Shift: numeros, borrar, guiones y acento
+        case KC_1 ... KC_0:
+        case KC_BSPC:
+        case KC_DEL:
+        case ES_MINS:
+        case ES_UNDS:
+        case ES_ACUT:
+            return true;
+        default:
+            return false;
+    }
 }

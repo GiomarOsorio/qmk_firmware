@@ -27,10 +27,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define OS_DETECTION_DEBOUNCE 200
 #define OS_DETECTION_KEYBOARD_RESET
 
+// Doble toque en Shift izquierdo = Caps Word
+#define DOUBLE_TAP_SHIFT_TURNS_ON_CAPS_WORD
+
 #ifdef RGB_MATRIX_ENABLE
     #define RGB_MATRIX_KEYPRESSES // reacts to keypresses
     #define RGB_MATRIX_SLEEP // turn off effects when suspended
     #define RGB_MATRIX_FRAMEBUFFER_EFFECTS
+    #undef RGB_MATRIX_MAXIMUM_BRIGHTNESS
     #define RGB_MATRIX_MAXIMUM_BRIGHTNESS 150 // limits maximum brightness of LEDs to 150 out of 255. Higher may cause the controller to crash.
     #define RGB_MATRIX_HUE_STEP 5
     #define RGB_MATRIX_SAT_STEP 5
